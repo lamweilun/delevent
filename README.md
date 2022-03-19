@@ -75,6 +75,7 @@ int main()
 ```C++
 #include "delevent.h" // del::event
 #include <iostream>   // std::cout
+#include <string>
 
 // Basic singleton that holds del::event
 struct PlayerEvents
@@ -91,12 +92,10 @@ struct PlayerEvents
 // Enemy that subscribes to PlayerEvents
 class Enemy
 {
-  int m_HP;
-
 public:
 
   // PlayerEvent attaches to this object's "TakeDamage" function
-  Enemy(int hp) : m_HP{ hp }
+  Enemy(const char* name, int hp) : m_Name{name}, m_HP{ hp }
   {
     PlayerEvents::Get().PlayerAttackEvent.attach(*this, &Enemy::TakeDamage);
   }
@@ -108,24 +107,38 @@ public:
   }
 
 private:
+
+    std::string m_Name;
+    int m_HP;
+
   void TakeDamage(int damage)
   {
-    std::cout << "Taking " << damage << " damage..." << std::endl;
     m_HP -= damage;
-    std::cout << "Remaining HP: " << m_HP << std::endl;
+    std::cout << m_Name << " has taken " << damage << " damage." 
+    << " Remaining HP: " << m_HP << std::endl;
   }
 };
 
 int main()
 {
-  // Creating an enemy with 10 HP
-  Enemy enemy(10);
+  // Creating enemies
+  Enemy enemy1("Enemy 1", 10);
+  Enemy enemy2("Enemy 2", 10);
 
   /* This would then print
-  Taking 1 damage...
-  Remaining HP: 9
+  Enemy 1 has taken 1 damage. Remaining HP: 9
+  Enemy 2 has taken 1 damage. Remaining HP: 9
+  Enemy 1 has taken 2 damage. Remaining HP: 7
+  Enemy 2 has taken 2 damage. Remaining HP: 7
+  Enemy 1 has taken 3 damage. Remaining HP: 4
+  Enemy 2 has taken 3 damage. Remaining HP: 4
+  Enemy 1 has taken 4 damage. Remaining HP: 0
+  Enemy 2 has taken 4 damage. Remaining HP: 0
   */
   PlayerEvents::Get().PlayerAttackEvent(1);
+  PlayerEvents::Get().PlayerAttackEvent(2);
+  PlayerEvents::Get().PlayerAttackEvent(3);
+  PlayerEvents::Get().PlayerAttackEvent(4);
 }
 ```
 
