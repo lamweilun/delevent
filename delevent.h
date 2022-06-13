@@ -146,6 +146,9 @@ namespace del
   private:
     void detach_impl(base_callable &temp)
     {
+      if (!m_Callables.size())
+        return;
+
       // Predicate to determine if it is the same callable type
       auto compPred = [&](std::unique_ptr<base_callable> &callable)
       { return temp.compare(callable.get()); };
@@ -156,6 +159,9 @@ namespace del
 
     void detach_all_impl(base_callable &temp)
     {
+      if (!m_Callables.size())
+        return;
+
       // Predicate to determine if it is the same callable type
       auto compPred = [&](std::unique_ptr<base_callable> &callable)
       { return temp.compare(callable.get()); };
